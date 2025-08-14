@@ -1,0 +1,44 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: ${POSTGRES_PASS}
+    url: jdbc:postgresql://${POSTGRES_HOST}/${POSTGRES_DB}
+    hikari:
+      auto-commit: true
+      minimum-idle: 5
+      maximum-pool-size: 20
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 20
+        jdbc:
+          batch_size: 20
+          lob:
+            non_contextual_creation: true
+        format_sql: true
+        order_updates: true
+        use_sql_comments: true
+        order_inserts: true
+        show_sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  servlet:
+    multipart:
+      maxRequestSize: 1GB
+      enabled: true
+      maxFileSize: 1GB
+logging:
+  level:
+    org.springframework.security: DEBUG
+access-token:
+  private: ${ACCESS_TOKEN_PRIVATE_KEY_PATH}
+  public: ${ACCESS_TOKEN_PUBLIC_KEY_PATH}
+refresh-token:
+  private: ${REFRESH_TOKEN_PRIVATE_KEY_PATH}
+  public: ${REFRESH_TOKEN_PUBLIC_KEY_PATH}
