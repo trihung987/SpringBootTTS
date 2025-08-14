@@ -12,7 +12,7 @@ import me.trihung.dto.request.SignUpRequest;
 import me.trihung.entity.User;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper {
+public interface UserMapper { 
 	UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 	UserDTO toDto (User user);
 	@Mapping(target = "avatarUrl", ignore = true)

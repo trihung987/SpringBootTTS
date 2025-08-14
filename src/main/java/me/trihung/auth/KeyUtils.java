@@ -1,5 +1,6 @@
 package me.trihung.auth;
 import lombok.extern.slf4j.Slf4j;
+import me.trihung.exception.KeyInitializationException;
 
 import org.apache.juli.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,11 +80,13 @@ public class KeyUtils {
                 keyPair = new KeyPair(publicKey, privateKey);
                 return keyPair;
             } catch (NoSuchAlgorithmException | IOException | InvalidKeySpecException e) {
-                throw new RuntimeException(e);
+            	 log.error("Failed to initialize key pair from files: {} and {}. Exception: {}", publicKeyFile.getAbsolutePath(), privateKeyFile.getAbsolutePath(), e.getMessage(), e);
+                 throw new KeyInitializationException("Failed to initialize key pair", e);
             }
         } else {
             if (Arrays.stream(environment.getActiveProfiles()).anyMatch(s -> s.equals("prod"))) {
-                throw new RuntimeException("public and private keys don't exist");
+            	log.error("Missing public and/or private key files for production environment. Public key path: {}, Private key path: {}", publicKeyFile.getAbsolutePath(), privateKeyFile.getAbsolutePath());
+                throw new KeyInitializationException("Missing public and/or private key files in production environment. Startup aborted.");
             }
         }
 

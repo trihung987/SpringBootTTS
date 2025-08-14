@@ -89,7 +89,6 @@ public class UserServiceImpl implements UserService{
         	UsernamePasswordAuthenticationToken authtoken = UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getUsername(), loginRequest.getPassword());
     		Authentication authentication = authenticationManager.authenticate(authtoken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            System.out.println("hello passs login");
             return authentication;
 
         } catch (AuthenticationException ex) {
@@ -115,14 +114,11 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public TokenDTO login(LoginRequest loginRequest) {
 		log.debug("run login");
-		System.out.println("hello login 2");
 		Authentication authentication = authenticateUser(loginRequest);
-		System.out.println("hello login 3");
 		UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
         if (userDetails == null) {
             throw BadRequestException.message("Không tìm thấy người dùng: " + loginRequest.getUsername());
         }
-        System.out.println("hello login 4");
 		return tokenGenerator.createToken(authentication);
 	}
 

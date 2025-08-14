@@ -19,7 +19,7 @@ import java.util.Collection;
 public class RoleAuthorizationAspect {
 	
 	//AOP chạy checkRole khi các method có annotation hasAnyRole để check trước khi chạy
-    @Around("@annotation(com.vinaacademy.platform.feature.user.auth.annotation.HasAnyRole)")
+    @Around("@annotation(me.trihung.auth.annotation.HasAnyRole)")
     public Object checkRole(ProceedingJoinPoint joinPoint) throws Throwable {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         HasAnyRole hasAnyRole = signature.getMethod().getAnnotation(HasAnyRole.class);
