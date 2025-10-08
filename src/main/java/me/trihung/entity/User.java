@@ -20,6 +20,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PostLoad;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -60,8 +61,7 @@ public class User extends BaseEntity {
 
 	@Column(name = "avatar_url")
 	private String avatarUrl;
-	
-	
+
 	@Column(name = "full_name")
 	private String fullName;
 
@@ -70,9 +70,17 @@ public class User extends BaseEntity {
 
 //    @Column(name = "birthday")
 //    private LocalDate birthday;
-
+	
+	//Tự tạo 1 bảng riêng để lưu trữ danh sách role của user
+	// có 2 cột userid - role_id (khóa chính là 2 cột )
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
+
+	@PostLoad
+	public void afterLoad() {
+		// Logic xử lý sẽ chạy ngay sau khi entity được tải
+		System.out.println("Giá trị đã được set sau khi tải");
+	}
 
 }

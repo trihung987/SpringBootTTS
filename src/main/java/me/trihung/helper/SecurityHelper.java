@@ -42,18 +42,19 @@ public class SecurityHelper {
 
         String username;
         Object principal = authentication.getPrincipal();
-
         if (principal instanceof UserDetails userDetails) {
             username = userDetails.getUsername();
+        }else if (principal instanceof User user) {
+            username = user.getUsername();
         } else if (principal instanceof Jwt jwt) {
-            username = jwt.getClaimAsString("sub");
+            username = jwt.getSubject();
         } else {
             username = principal.toString();
         }
-
         // Based on CustomUserDetailService, we're using username as the username
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UnauthorizedException("User not found"));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UnauthorizedException("User not found from "+username));
+        return user;
     }
 
     /**

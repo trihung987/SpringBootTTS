@@ -1,5 +1,7 @@
 package me.trihung.dto;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -7,6 +9,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import me.trihung.entity.Role;
+import me.trihung.entity.RoleDTO;
 
 @Data
 @SuperBuilder
@@ -22,5 +26,5 @@ public class UserDTO extends BaseDTO{
     private String avatarUrl;
 //    private String description;
 //    private LocalDate birthday;
-    //private Set<Role> roles = new HashSet<>();
+    private Set<RoleDTO> roles = new HashSet<>();
 }

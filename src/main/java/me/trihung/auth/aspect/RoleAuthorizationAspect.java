@@ -32,7 +32,11 @@ public class RoleAuthorizationAspect {
         Collection<String> authorities = authentication.getAuthorities().stream()
                 .map(auth -> auth.getAuthority().replace("SCOPE_", ""))
                 .toList();
+        System.out.println("authority list");
+        for (String s : authorities) {
+            System.out.println("role: "+s);
 
+        }
         boolean hasRequiredRole = authorities.stream()
                 .anyMatch(authority -> Arrays.stream(hasAnyRole.value())
                         .anyMatch(authority::contains));

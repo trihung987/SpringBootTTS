@@ -1,6 +1,9 @@
 package me.trihung.controller;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,12 +17,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import me.trihung.auth.annotation.HasAnyRole;
+import me.trihung.config.AuthConstants;
 import me.trihung.dto.TokenDTO;
+import me.trihung.dto.UserDTO;
 import me.trihung.dto.request.LoginRequest;
 import me.trihung.dto.request.RefreshTokenRequest;
 import me.trihung.dto.request.SignUpRequest;
 import me.trihung.enums.RoleType;
+import me.trihung.repository.UserRepository;
 import me.trihung.service.UserService;
+
 
 @RestController
 //@PreAuthorize("isAuthenticated()")
@@ -28,12 +35,15 @@ import me.trihung.service.UserService;
 public class AuthController {
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	UserRepository userRepository;
 
 	@Operation(summary = "Đăng ký mới tài khoản")
 	@PostMapping("/register")
 	public ResponseEntity<String> register(@RequestBody @Valid SignUpRequest signUpRequest) {
 		userService.signUp(signUpRequest);
-		return ResponseEntity.status(HttpStatus.CREATED).body("Đăng ký tài khoản thành công");
+		return ResponseEntity.status(200).body("Đăng ký tài khoản thành công");
 	}
 	
 	@Operation(summary = "Đăng nhập tài khoản")
@@ -50,10 +60,38 @@ public class AuthController {
 		return ResponseEntity.status(200).body(userService.refreshAccessToken(refreshTokenRequest));
 	}
 	
+	
+	@Operation(summary = "Lấy thông tin user")
 	@PreAuthorize("isAuthenticated()")
-	@GetMapping("/testauth")
-	public ResponseEntity<String> test(){
-		return ResponseEntity.status(200).body("ok api");
+	@GetMapping("/me")
+	public ResponseEntity<UserDTO> me(){
+		Locale locale = LocaleContextHolder.getLocale();
+        String language = locale.getLanguage();
+
+        userRepository.findByUsername("trihung987");
+        if ("en".equals(language)) {
+            System.out.println("Current language is English.");
+        } else if ("ja".equals(language)) {
+            System.out.println("Current language is Japanese.");
+        } else {
+            System.out.println("Current language is: " + language);
+        }
+		return ResponseEntity.status(200).body(userService.me());
 	}
+	 
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/logout")
+	public ResponseEntity<String> logout(@RequestBody String refreshToken){
+		userService.logout(refreshToken);
+		return ResponseEntity.status(200).body("Logout thành công");
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/get")
+	
+	public ResponseEntity<String> getMethodName() {
+		return ResponseEntity.status(200).body(userRepository.findByUsername("trihung987").get().getFullName());
+	}
+	
 
 }
