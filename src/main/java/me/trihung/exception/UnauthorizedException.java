@@ -19,7 +19,7 @@ public class UnauthorizedException extends RuntimeException {
     public static UnauthorizedException defaultException() {
         return UnauthorizedException.builder()
                 .code(401)
-                .message("Unauthorized")
+                .message("Unauthorized| Không xác thực")
                 .build();
     }
 

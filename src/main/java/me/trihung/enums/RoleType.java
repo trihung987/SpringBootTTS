@@ -3,9 +3,9 @@ package me.trihung.enums;
 public enum RoleType {
     ADMIN("ADMIN"),
     USER("USER"),
-    ORGANIZATION("ORGANIZATION");
+    MANAGER("MANAGER");
 
-    private final String value;
+    public final String value;
 
     RoleType(String value) {
         this.value = value;

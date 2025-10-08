@@ -6,3 +6,8 @@ ACCESS_TOKEN_PRIVATE_KEY_PATH: "access-refresh-token-keys/access-token-private.k
 ACCESS_TOKEN_PUBLIC_KEY_PATH: "access-refresh-token-keys/access-token-public.key"
 REFRESH_TOKEN_PRIVATE_KEY_PATH: "access-refresh-token-keys/refresh-token-private.key"
 REFRESH_TOKEN_PUBLIC_KEY_PATH: "access-refresh-token-keys/refresh-token-public.key"
+
+vnpay:
+  tmn-code: 4V0UG95A
+  hash-secret: 9UUN29DW7VXYOZEYV9F670QUJPDY3I5E
+  url-return: http://localhost:4200/payment-result

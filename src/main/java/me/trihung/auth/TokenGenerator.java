@@ -4,22 +4,24 @@ import java.text.MessageFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
 import me.trihung.dto.TokenDTO;
-import me.trihung.entity.User;
 
 @Component
+@Slf4j
 public class TokenGenerator {
     
     @Autowired
@@ -32,12 +34,15 @@ public class TokenGenerator {
     private String createAccessToken(Authentication authentication) {
         UserDetails user = (UserDetails) authentication.getPrincipal();
         Instant now = Instant.now();
-
+        var roles = user.getAuthorities().stream()
+                .map(auth -> auth.getAuthority())
+                .toList();
         JwtClaimsSet claimsSet = JwtClaimsSet.builder()
                 .issuer(user.getUsername())
                 .issuedAt(now)
                 .expiresAt(now.plus(5, ChronoUnit.MINUTES))
                 .subject(user.getUsername())
+                .claim("roles", roles)
                 .build();
 
         return accessTokenEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
@@ -45,12 +50,16 @@ public class TokenGenerator {
     
     public String createAccessToken(UserDetails userDetails) {
         Instant now = Instant.now();
-
+        
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(auth -> auth.getAuthority())  // get the string name of the role
+                .toList();
         JwtClaimsSet claimsSet = JwtClaimsSet.builder()
                 .issuer(userDetails.getUsername())
                 .issuedAt(now)
                 .expiresAt(now.plus(5, ChronoUnit.MINUTES))
                 .subject(userDetails.getUsername())
+                .claim("roles", roles)
                 .build();
 
         return accessTokenEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
@@ -73,7 +82,7 @@ public class TokenGenerator {
     public TokenDTO createToken(Authentication authentication) {
         if (!(authentication.getPrincipal() instanceof UserDetails user)) {
             throw new BadCredentialsException(
-                    MessageFormat.format("principal {0} is not of User type", authentication.getPrincipal().getClass())
+                    MessageFormat.format("principal {0} is not of UserDetail type", authentication.getPrincipal().getClass())
             );
         }
 
@@ -95,7 +104,8 @@ public class TokenGenerator {
             refreshToken = createRefreshToken(authentication);
         }
         tokenDTO.setRefreshToken(refreshToken);
-
+//        System.out.println("refresh new "+refreshToken);
+        log.debug("refresh new "+refreshToken);
         return tokenDTO;
     }
 

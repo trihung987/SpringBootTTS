@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignUpRequest {
 	
-    @NotBlank(message = "Vui lòng nhập username")
-    @Size(min = 5, max = 30, message = "Username phải có độ dài từ 5-30 ký tự")
+    @NotBlank(message = "Vui lòng nhập tên đăng nhập")
+    @Size(min = 5, max = 30, message = "Tên đăng nhập phải có độ dài từ 5-30 ký tự")
     private String username;
     
     @NotBlank(message = "Vui lòng nhập mật khẩu")
